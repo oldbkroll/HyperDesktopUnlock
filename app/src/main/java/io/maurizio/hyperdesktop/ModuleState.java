@@ -11,6 +11,10 @@ import de.robv.android.xposed.XposedHelpers;
 /** Cached per-process gate. No provider IPC on the steady-state hook path. */
 final class ModuleState {
     static final String KEY = "hyperdesktop_unlock_enabled";
+    static final String FLAGS_SYSTEM = "hyperdesktop_flags_system";
+    static final String FLAGS_UI = "hyperdesktop_flags_systemui";
+    private static volatile boolean flagsSystem;
+    private static volatile boolean flagsUi;
     private static volatile boolean enabled;
     private static volatile boolean ready;
     private static long nextAttempt;
@@ -18,6 +22,10 @@ final class ModuleState {
     static boolean enabled() {
         if (!ready) bootstrap();
         return enabled;
+    }
+
+    static boolean desktopEnabled(String where) {
+        return enabled() && ("systemui".equals(where) ? flagsUi : flagsSystem);
     }
 
     private static synchronized void bootstrap() {
@@ -32,23 +40,32 @@ final class ModuleState {
             }
             if (c == null) return;
             final Context context = c;
-            c.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(KEY), false,
-                    new ContentObserver(new Handler(Looper.getMainLooper())) {
-                        @Override public void onChange(boolean selfChange) { refresh(context); }
-                    });
+            ContentObserver observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
+                @Override public void onChange(boolean selfChange) { refresh(context); }
+            };
+            for (String key : new String[]{KEY, FLAGS_SYSTEM, FLAGS_UI})
+                c.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(key), false, observer);
             refresh(c);
             ready = true;
         } catch (Throwable ignored) { enabled = false; } // Leave original system behavior intact.
     }
 
     private static void refresh(Context c) {
-        try { enabled = Settings.Secure.getInt(c.getContentResolver(), KEY, 1) != 0; }
-        catch (Throwable ignored) { enabled = false; }
+        try {
+            enabled = Settings.Secure.getInt(c.getContentResolver(), KEY, 1) != 0;
+            flagsSystem = Settings.Secure.getInt(c.getContentResolver(), FLAGS_SYSTEM, 0) != 0;
+            flagsUi = Settings.Secure.getInt(c.getContentResolver(), FLAGS_UI, 0) != 0;
+        } catch (Throwable ignored) { enabled = flagsSystem = flagsUi = false; }
     }
 
     static boolean setEnabled(Context c, boolean value) {
         if (!Settings.Secure.putInt(c.getContentResolver(), KEY, value ? 1 : 0)) return false;
         enabled = value;
+        return true;
+    }
+    static boolean setDesktopFlags(Context c, boolean systemUi, boolean value) {
+        if (!Settings.Secure.putInt(c.getContentResolver(), systemUi ? FLAGS_UI : FLAGS_SYSTEM, value ? 1 : 0)) return false;
+        if (systemUi) flagsUi = value; else flagsSystem = value;
         return true;
     }
     private ModuleState() {}

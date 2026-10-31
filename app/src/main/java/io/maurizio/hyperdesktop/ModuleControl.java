@@ -63,6 +63,10 @@ final class ModuleControl {
                 String c0 = i.getStringExtra(Prefs.EXTRA_CMD);
                 if (c0 != null) cmd = c0;
                 switch (cmd) {
+                    case "flags_system_on":  ModuleState.setDesktopFlags(c, false, true); break;
+                    case "flags_system_off": ModuleState.setDesktopFlags(c, false, false); break;
+                    case "flags_ui_on":      ModuleState.setDesktopFlags(c, true, true); break;
+                    case "flags_ui_off":     ModuleState.setDesktopFlags(c, true, false); break;
                     case "enable":       ModuleState.setEnabled(c, true); break;
                     case "disable":
                         if (ModuleState.setEnabled(c, false)) setMirror(c, true);
@@ -76,6 +80,8 @@ final class ModuleControl {
                     StringBuilder sb = new StringBuilder();
                     sb.append("version=").append(BuildConfig.VERSION_NAME).append('\n');
                     sb.append("enabled=").append(ModuleState.enabled() ? 1 : 0).append('\n');
+                    sb.append("flags_system=").append(ModuleState.desktopEnabled("system_server") ? 1 : 0).append('\n');
+                    sb.append("flags_ui=").append(ModuleState.desktopEnabled("systemui") ? 1 : 0).append('\n');
                     sb.append("monitor=").append(monitor).append('\n');
                     sb.append("mirror=").append(mirrorSetting(c)).append('\n');
                     sb.append("profile=extend_companion\n");

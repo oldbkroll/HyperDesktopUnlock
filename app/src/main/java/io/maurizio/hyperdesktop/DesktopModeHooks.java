@@ -103,9 +103,9 @@ public final class DesktopModeHooks {
             }
             if (!globalForces) continue;
             if (overrideOn != null && isToggleGetter(name) && m.getReturnType().isInstance(overrideOn)) {
-                if (force(m, overrideOn)) n++;
+                if (force(m, overrideOn, where)) n++;
             } else if (m.getReturnType() == boolean.class && FORCED_TRUE.contains(name)) {
-                if (force(m, Boolean.TRUE)) n++;
+                if (force(m, Boolean.TRUE, where)) n++;
             }
         }
         XLog.i("[" + where + "] " + cls.getName() + ": " + n + " gate forzati");
@@ -152,7 +152,7 @@ public final class DesktopModeHooks {
         try {
             XposedBridge.hookMethod(m, new XC_MethodHook() {
                 @Override protected void beforeHookedMethod(MethodHookParam p) {
-                        if (!ModuleState.enabled()) return;
+                        if (!ModuleState.enabled() || !ModuleState.desktopEnabled(where)) return;
                     Integer did = firstInt(p.args);
                     if (did != null && did != 0) {
                         p.setResult(Boolean.TRUE);
@@ -207,11 +207,11 @@ public final class DesktopModeHooks {
         return null;
     }
 
-    private static boolean force(Method m, Object value) {
+    private static boolean force(Method m, Object value, String where) {
         try {
             XposedBridge.hookMethod(m, new XC_MethodHook() {
                 @Override protected void beforeHookedMethod(MethodHookParam p) {
-                    if (ModuleState.enabled()) p.setResult(value);
+                    if (ModuleState.enabled() && ModuleState.desktopEnabled(where)) p.setResult(value);
                 }
             });
             return true;

@@ -37,6 +37,8 @@ public class SettingsActivity extends Activity {
     private LinearLayout root;
     private android.widget.Switch master;
     private boolean updatingMaster;
+    private android.widget.Switch flagsSystem;
+    private android.widget.Switch flagsUi;
     private TextView oldWarn;
     private Button oldButton;
     private ModuleClient.Callback modeUpdate;
@@ -79,9 +81,32 @@ public class SettingsActivity extends Activity {
                     Toast.makeText(this, R.string.mode_switch_failed, Toast.LENGTH_LONG).show();
             });
         });
+        section(R.string.flags_section);
+        note(getString(R.string.flags_hint));
+        flagsSystem = flagSwitch(R.string.flags_system, "flags_system");
+        flagsUi = flagSwitch(R.string.flags_ui, "flags_ui");
         modeControls();
         section(R.string.section_diag);
         diagnosticsRow();
+    }
+
+    private android.widget.Switch flagSwitch(int label, String command) {
+        android.widget.Switch button = new android.widget.Switch(this);
+        button.setText(label);
+        button.setEnabled(false);
+        root.addView(button, matchWidth());
+        button.setOnCheckedChangeListener((view, checked) -> {
+            if (updatingMaster) return;
+            button.setEnabled(false);
+            ModuleClient.send(this, command + (checked ? "_on" : "_off"), false, data -> {
+                modeUpdate.onResult(data);
+                Map<String, String> state = ModuleClient.parse(data);
+                String key = "flags_ui".equals(command) ? "flags_ui" : "flags_system";
+                if (state == null || !(checked ? "1" : "0").equals(state.get(key)))
+                    Toast.makeText(this, R.string.mode_switch_failed, Toast.LENGTH_LONG).show();
+            });
+        });
+        return button;
     }
 
     private void modeControls() {
@@ -104,6 +129,10 @@ public class SettingsActivity extends Activity {
             updatingMaster = true;
             master.setChecked(enabled);
             master.setEnabled(current);
+            flagsSystem.setChecked(current && "1".equals(s.get("flags_system")));
+            flagsUi.setChecked(current && "1".equals(s.get("flags_ui")));
+            flagsSystem.setEnabled(current && enabled);
+            flagsUi.setEnabled(current && enabled);
             updatingMaster = false;
             if (s != null && !BuildConfig.VERSION_NAME.equals(s.get("version"))) {
                 desktop.setEnabled(false);

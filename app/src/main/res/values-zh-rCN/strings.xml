@@ -43,4 +43,8 @@
     <string name="master_enabled">启用系统解锁</string>
     <string name="master_hint">关闭后恢复镜像，由系统处理显示逻辑；必要时重新插拔外屏。重新开启不会自动切换独立模式。更新模块后请先重启一次，再使用此开关。</string>
     <string name="master_disabled">解锁已关闭，使用系统镜像</string>
+    <string name="flags_section">故障排查</string>
+    <string name="flags_system">强制桌面能力：系统框架</string>
+    <string name="flags_ui">强制桌面能力：系统界面</string>
+    <string name="flags_hint">本诊断版两项默认关闭，仅控制桌面能力强制 Hook；独立外屏和镜像按钮仍可用。每次只改一项，然后重新连接外屏。两项均开启即恢复此前的桌面能力强制行为。</string>
 </resources>

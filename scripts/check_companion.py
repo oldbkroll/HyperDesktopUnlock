@@ -37,3 +37,11 @@ app = manifest.find('application')
 assert [s.get(android + 'name') for s in app.findall('service')] == ['.MonitorTile']
 assert not app.findall('provider')
 print('PASS: runtime gate covers all mutating hooks; no display/input/power/Dock ownership; protected mirror control retained')
+
+flags = (source / 'DesktopModeHooks.java').read_text(encoding='utf-8')
+assert flags.count('ModuleState.desktopEnabled(where)') == 2
+assert 'GestureConfigHooks' not in (source / 'MainHook.java').read_text(encoding='utf-8')
+assert not (source / 'GestureConfigHooks.java').exists()
+state = (source / 'ModuleState.java').read_text(encoding='utf-8')
+assert 'FLAGS_SYSTEM, 0' in state and 'FLAGS_UI, 0' in state
+print('PASS: both capability callback types use process gate; defaults off; failed event hooks removed')

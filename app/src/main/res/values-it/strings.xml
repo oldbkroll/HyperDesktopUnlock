@@ -46,4 +46,8 @@
     <string name="master_enabled">Abilita sblocco di sistema</string>
     <string name="master_hint">Disattivando si ripristina il mirroring e la gestione di sistema. Ricollegare il cavo se necessario. Riattivare non avvia automaticamente la modalità indipendente. Dopo un aggiornamento riavviare prima di usare questo interruttore.</string>
     <string name="master_disabled">Sblocco disabilitato; mirroring di sistema</string>
+    <string name="flags_section">Diagnostica avanzata</string>
+    <string name="flags_system">Forza capacità desktop: framework</string>
+    <string name="flags_ui">Forza capacità desktop: interfaccia di sistema</string>
+    <string name="flags_hint">Entrambe disattivate in questa build diagnostica. Controllano solo gli override desktop; restano disponibili i comandi display indipendente e mirroring. Modificare una alla volta e ricollegare il display. Attivarle entrambe ripristina gli override precedenti.</string>
 </resources>

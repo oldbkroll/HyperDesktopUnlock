@@ -55,4 +55,8 @@
     <string name="master_enabled">Enable system unlock</string>
     <string name="master_hint">Off restores mirroring and lets the system handle displays. Reconnect the cable if needed. Enabling does not automatically switch to independent mode. After updating the module, reboot once before using this switch.</string>
     <string name="master_disabled">Unlock disabled; system mirroring</string>
+    <string name="flags_section">Diagnostic controls</string>
+    <string name="flags_system">Force desktop capabilities: System Framework</string>
+    <string name="flags_ui">Force desktop capabilities: System UI</string>
+    <string name="flags_hint">Both are off by default for this diagnostic build. These only control capability overrides; independent display and mirror controls remain available. Change one at a time, then reconnect the display. Enabling both restores the previous capability overrides.</string>
 </resources>
