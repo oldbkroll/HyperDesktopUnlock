@@ -301,15 +301,15 @@ public class SettingsActivity extends Activity {
         StringBuilder r = new StringBuilder();
         r.append("HyperDesktop Unlock ").append(BuildConfig.VERSION_NAME)
          .append(" (").append(BuildConfig.VERSION_CODE).append(")\n");
-        r.append("Phone: ").append(Build.MANUFACTURER).append(' ').append(Build.MODEL)
+        r.append(getString(R.string.report_phone)).append(Build.MANUFACTURER).append(' ').append(Build.MODEL)
          .append(" (").append(Build.DEVICE).append(")\n");
         r.append("Android ").append(Build.VERSION.RELEASE).append(" (SDK ").append(Build.VERSION.SDK_INT)
-         .append("), build ").append(Build.VERSION.INCREMENTAL).append('\n');
+         .append(") ").append(getString(R.string.report_build)).append(Build.VERSION.INCREMENTAL).append('\n');
         String os = getprop("ro.mi.os.version.incremental");
         if (os.isEmpty()) os = getprop("ro.mi.os.version.name");
         r.append("HyperOS: ").append(os.isEmpty() ? "?" : os).append('\n');
-        r.append("LSPosed: ").append(Boolean.TRUE.equals(sModuleActive) ? "module active" : "module NOT active").append('\n');
-        r.append("Settings:");
+        r.append("LSPosed: ").append(getString(Boolean.TRUE.equals(sModuleActive) ? R.string.report_active : R.string.report_inactive)).append('\n');
+        r.append(getString(R.string.report_settings));
         if (prefs != null) {
             for (Map.Entry<String, ?> e : new TreeMap<>(prefs.getAll()).entrySet()) {
                 if (Prefs.K_MODES_CACHE.equals(e.getKey())) continue;
@@ -317,7 +317,7 @@ public class SettingsActivity extends Activity {
             }
         }
         r.append("\n\n");
-        if (data == null) r.append("No answer from the system: the module is not loaded (reboot after installing or updating it).\n");
+        if (data == null) r.append(getString(R.string.diag_no_answer)).append('\n');
         else r.append(data);
         return r.toString();
     }
@@ -345,7 +345,7 @@ public class SettingsActivity extends Activity {
                 @Override public void onClick(DialogInterface d, int w) {
                     copy(report);
                     Toast.makeText(SettingsActivity.this, R.string.diag_copied_issue, Toast.LENGTH_LONG).show();
-                    String body = "**What happened**\n\n\n**Diagnostic report** (copied by the app: paste it between the lines)\n\n```\n\n```\n";
+                    String body = getString(R.string.report_issue_template);
                     String url = ISSUES_URL + "?body=" + Uri.encode(body);
                     try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); } catch (Throwable ignored) {}
                 }
@@ -353,7 +353,7 @@ public class SettingsActivity extends Activity {
             .setNegativeButton(R.string.diag_share, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface d, int w) {
                     Intent send = new Intent(Intent.ACTION_SEND).setType("text/plain")
-                            .putExtra(Intent.EXTRA_SUBJECT, "HyperDesktop Unlock report")
+                            .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.report_subject))
                             .putExtra(Intent.EXTRA_TEXT, report);
                     try { startActivity(Intent.createChooser(send, getString(R.string.diag_share))); } catch (Throwable ignored) {}
                 }
@@ -364,7 +364,7 @@ public class SettingsActivity extends Activity {
     private void copy(String text) {
         try {
             ClipboardManager cm = getSystemService(ClipboardManager.class);
-            if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("HyperDesktop report", text));
+            if (cm != null) cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.report_subject), text));
         } catch (Throwable ignored) {}
     }
 

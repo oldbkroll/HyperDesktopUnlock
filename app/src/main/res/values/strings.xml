@@ -101,4 +101,11 @@
     <string name="tile_off">Off</string>
     <string name="tile_no_monitor">No monitor</string>
     <string name="tile_not_active">Module not active</string>
+    <string name="report_phone">"Phone: "</string>
+    <string name="report_build">"build "</string>
+    <string name="report_active">module active</string>
+    <string name="report_inactive">module NOT active</string>
+    <string name="report_settings">Settings:</string>
+    <string name="report_issue_template">**What happened**\n\n\n**Diagnostic report** (copied by the app: paste it between the lines)\n\n```\n\n```\n</string>
+    <string name="report_subject">HyperDesktop Unlock report</string>
 </resources>

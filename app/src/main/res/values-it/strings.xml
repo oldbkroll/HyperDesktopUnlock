@@ -90,4 +90,13 @@
     <string name="tile_off">Spento</string>
     <string name="tile_no_monitor">Nessun monitor</string>
     <string name="tile_not_active">Modulo non attivo</string>
+    <string name="app_name">HyperDesktop Unlock</string>
+    <string name="xposed_desc">Rende indipendente il monitor esterno su Xiaomi HyperOS 4 / Android 17: ripristina il pulsante Desktop e impedisce il mirroring forzato.</string>
+    <string name="report_phone">"Telefono: "</string>
+    <string name="report_build">"build "</string>
+    <string name="report_active">modulo attivo</string>
+    <string name="report_inactive">modulo NON attivo</string>
+    <string name="report_settings">Impostazioni:</string>
+    <string name="report_issue_template">**Descrizione del problema**\n\n\n**Report diagnostico** (copiato: incollalo nel blocco seguente)\n\n```\n\n```\n</string>
+    <string name="report_subject">Report HyperDesktop Unlock</string>
 </resources>
