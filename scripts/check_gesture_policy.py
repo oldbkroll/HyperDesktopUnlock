@@ -34,9 +34,12 @@ public class GesturePolicyTest {
                     'io.maurizio.hyperdesktop.GesturePolicyTest'], check=True)
 
 code = (src/'GestureConfigHooks.java').read_text(encoding='utf-8')
-assert '"com.miui.home".equals(pkg)' in code
-assert 'new Configuration(config)' in code
+assert 'getPackageUid("com.miui.home", 0)' in code
+assert 'XposedHelpers.getIntField(p.thisObject, "mUid") != homeUid' in code
+assert 'new Object[]{0, changedMask}' in code
+assert 'XposedBridge.invokeOriginalMethod' in code
+assert '(mask & changedMask) == 0 || (mask & lifecycleMask) != 0' in code
 assert 'afterHookedMethod' in code and 'p.setResult' not in code
 assert 'GestureConfigPolicy.shouldRefresh(ModuleState.enabled()' in code
 assert '"OS4.0.5.0.XPBCNXM".equals(Build.VERSION.INCREMENTAL)' in code
-print('PASS: launcher-only, original callbacks preserved, actual phone config copied, firmware gated')
+print('PASS: launcher-only, original callbacks preserved, display 0 BASIC_CHANGED only, firmware gated')
