@@ -8,7 +8,7 @@
 ## Build and validation
 - AGP 8.6.1, Gradle 8.9, JDK 17, compile/target SDK 35, min SDK 31. Runtime desktop hooks are firmware-dependent; a successful build does not establish HyperOS compatibility.
 - This upstream has no executable Gradle wrapper. Use an externally installed, checksum-verified Gradle 8.9: `gradle --no-daemon :app:assembleDebug :app:lintDebug`. If adding tests, use `:app:testDebugUnitTest` for meaningful pure logic tests only.
-- Keep build/dependency versions unchanged. Configure SDK through ignored `local.properties` or environment. Release requires the owner's signing keystore; distribute clearly marked debug builds when unavailable. Never commit keys or credentials.
+- Keep build/dependency versions unchanged. Configure SDK through ignored `local.properties` or environment. Official upstream Release requires the owner's keystore. The user explicitly requested personal Fork Release builds on 2026-10-31; those use separate locally preserved keys and must never be described as upstream-signed. Read docs/RELEASE_20261031.md for environment-based signing. Never commit keys or credentials.
 - Review merged manifest, exported components/permissions, resource locale parity and format placeholders, and `git diff --check`. Test physical reconnect, rotation, resolution and mirror recovery only with explicit device authorization.
 - Run `python scripts/check_locales.py` and `python scripts/check_companion.py`; the latter verifies runtime gates on all mutating hooks (revision 2) and excludes session-management APIs from this profile.
 

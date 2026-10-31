@@ -18,17 +18,17 @@ android {
         applicationId 'io.github.the_marox.hyperdesktop'
         minSdk 31
         targetSdk 35
-        versionCode 245
-        versionName '1.12.8-extend-cn.7'
+        versionCode 246
+        versionName '1.12.8-extend-cn.7-release.1'
     }
 
     signingConfigs {
         release {
             if (keystorePropertiesFile.exists()) {
                 storeFile rootProject.file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
+                storePassword System.getenv('DISPLAYUNLOCK_UNLOCK_STORE_PASSWORD') ?: keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
+                keyPassword System.getenv('DISPLAYUNLOCK_UNLOCK_STORE_PASSWORD') ?: keystoreProperties['keyPassword']
             }
         }
     }
