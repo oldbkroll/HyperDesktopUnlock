@@ -10,7 +10,7 @@
 - This upstream has no executable Gradle wrapper. Use an externally installed, checksum-verified Gradle 8.9: `gradle --no-daemon :app:assembleDebug :app:lintDebug`. If adding tests, use `:app:testDebugUnitTest` for meaningful pure logic tests only.
 - Keep build/dependency versions unchanged. Configure SDK through ignored `local.properties` or environment. Release requires the owner's signing keystore; distribute clearly marked debug builds when unavailable. Never commit keys or credentials.
 - Review merged manifest, exported components/permissions, resource locale parity and format placeholders, and `git diff --check`. Test physical reconnect, rotation, resolution and mirror recovery only with explicit device authorization.
-- Run `python scripts/check_locales.py` and `python scripts/check_companion.py`; the latter verifies five core hooks against the pinned baseline and excludes session-management APIs from this profile.
+- Run `python scripts/check_locales.py` and `python scripts/check_companion.py`; the latter verifies runtime gates on all mutating hooks (revision 2) and excludes session-management APIs from this profile.
 
 ## Privileged behavior and safety
 - LSPosed scope and hook registration must match the manifest and `MainHook`. Keep changes small and reversible; do not rewrite stable core hooks for cleanup.

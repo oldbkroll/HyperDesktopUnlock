@@ -33,7 +33,7 @@ public class MonitorTile extends TileService {
     private void toggle() {
         Map<String, String> s = last;
         Tile t = getQsTile();
-        if (s == null || t == null) { onStartListening(); return; }
+        if (s == null || !"1".equals(s.get("enabled")) || !BuildConfig.VERSION_NAME.equals(s.get("version")) || t == null) { onStartListening(); return; }
         boolean mirror = "1".equals(s.get("mirror"));
         boolean monitor = !"-1".equals(s.get("monitor"));
         if (!mirror && !monitor) { onStartListening(); return; }   // nessun monitor
@@ -47,7 +47,7 @@ public class MonitorTile extends TileService {
         Map<String, String> s = ModuleClient.parse(data);
         last = s;
         t.setLabel(getString(R.string.tile_monitor));
-        if (s == null) {
+        if (s == null || !BuildConfig.VERSION_NAME.equals(s.get("version")) || !"1".equals(s.get("enabled"))) {
             t.setState(Tile.STATE_INACTIVE);
             t.setSubtitle(getString(R.string.tile_not_active));
             t.updateTile();

@@ -40,4 +40,7 @@
     <string name="mode_status_computer">已选择独立外屏</string>
     <string name="mode_status_mirroring">已选择镜像模式</string>
     <string name="mode_switch_failed">系统未确认模式切换，请检查连接和模块诊断信息。</string>
+    <string name="master_enabled">启用系统解锁</string>
+    <string name="master_hint">关闭后恢复镜像，由系统处理显示逻辑；必要时重新插拔外屏。重新开启不会自动切换独立模式。更新模块后请先重启一次，再使用此开关。</string>
+    <string name="master_disabled">解锁已关闭，使用系统镜像</string>
 </resources>

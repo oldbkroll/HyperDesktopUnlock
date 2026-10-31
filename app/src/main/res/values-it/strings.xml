@@ -43,4 +43,7 @@
     <string name="mode_status_computer">Display indipendente selezionato</string>
     <string name="mode_status_mirroring">Mirroring selezionato</string>
     <string name="mode_switch_failed">Il sistema non ha confermato il cambio. Controlla il collegamento e la diagnostica.</string>
+    <string name="master_enabled">Abilita sblocco di sistema</string>
+    <string name="master_hint">Disattivando si ripristina il mirroring e la gestione di sistema. Ricollegare il cavo se necessario. Riattivare non avvia automaticamente la modalità indipendente. Dopo un aggiornamento riavviare prima di usare questo interruttore.</string>
+    <string name="master_disabled">Sblocco disabilitato; mirroring di sistema</string>
 </resources>

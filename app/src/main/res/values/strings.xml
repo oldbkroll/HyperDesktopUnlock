@@ -52,4 +52,7 @@
     <string name="mode_status_computer">Independent display selected</string>
     <string name="mode_status_mirroring">Mirroring selected</string>
     <string name="mode_switch_failed">The system did not confirm the mode change. Check the connection and module diagnostics.</string>
+    <string name="master_enabled">Enable system unlock</string>
+    <string name="master_hint">Off restores mirroring and lets the system handle displays. Reconnect the cable if needed. Enabling does not automatically switch to independent mode. After updating the module, reboot once before using this switch.</string>
+    <string name="master_disabled">Unlock disabled; system mirroring</string>
 </resources>

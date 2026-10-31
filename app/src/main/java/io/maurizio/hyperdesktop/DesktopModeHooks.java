@@ -152,6 +152,7 @@ public final class DesktopModeHooks {
         try {
             XposedBridge.hookMethod(m, new XC_MethodHook() {
                 @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        if (!ModuleState.enabled()) return;
                     Integer did = firstInt(p.args);
                     if (did != null && did != 0) {
                         p.setResult(Boolean.TRUE);
@@ -208,7 +209,11 @@ public final class DesktopModeHooks {
 
     private static boolean force(Method m, Object value) {
         try {
-            XposedBridge.hookMethod(m, XC_MethodReplacement.returnConstant(value));
+            XposedBridge.hookMethod(m, new XC_MethodHook() {
+                @Override protected void beforeHookedMethod(MethodHookParam p) {
+                    if (ModuleState.enabled()) p.setResult(value);
+                }
+            });
             return true;
         } catch (Throwable t) { XLog.e("hook fallito su " + m.getName(), t); return false; }
     }

@@ -39,6 +39,7 @@ public final class LauncherHooks {
             try {
                 XposedBridge.hookMethod(m, new XC_MethodHook() {
                     @Override protected void afterHookedMethod(MethodHookParam p) {
+                        if (!ModuleState.enabled()) return;
                         Boolean enableMirroring = null;
                         for (Object a : p.args) if (a instanceof Boolean) { enableMirroring = (Boolean) a; break; }
                         if (Boolean.FALSE.equals(enableMirroring)) onDesktopChosen();
@@ -75,6 +76,7 @@ public final class LauncherHooks {
      * "Monitor"; la guardia in system_server impedisce poi che torni a 1.
      */
     private static void ensureDesktopSetting(Context ctx) {
+        if (!ModuleState.enabled()) return;
         ContentResolver cr = ctx.getContentResolver();
         if (Settings.Secure.getInt(cr, SettingsGuardHooks.KEY_MIRROR, 0) != 1) return;
         Settings.Secure.putInt(cr, SettingsGuardHooks.KEY_MIRROR, 0);

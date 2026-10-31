@@ -57,6 +57,7 @@ public final class SettingsGuardHooks {
             try {
                 XposedBridge.hookMethod(m, new XC_MethodHook() {
                     @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        if (!ModuleState.enabled()) return;
                         if (Boolean.TRUE.equals(USER_WRITE.get())) return;
                         int ki = indexOfKey(p.args);
                         if (ki < 0) return;
@@ -90,6 +91,7 @@ public final class SettingsGuardHooks {
             try {
                 XposedBridge.hookMethod(m, new XC_MethodHook() {
                     @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        if (!ModuleState.enabled()) return;
                         int ki = indexOfKey(p.args);
                         if (ki < 0 || !KEY_MIRROR.equals(p.args[ki])) return;
                         String val = (ki + 1 < p.args.length) ? String.valueOf(p.args[ki + 1]) : null;

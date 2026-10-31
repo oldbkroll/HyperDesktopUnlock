@@ -63,14 +63,19 @@ final class ModuleControl {
                 String c0 = i.getStringExtra(Prefs.EXTRA_CMD);
                 if (c0 != null) cmd = c0;
                 switch (cmd) {
+                    case "enable":       ModuleState.setEnabled(c, true); break;
+                    case "disable":
+                        if (ModuleState.setEnabled(c, false)) setMirror(c, true);
+                        break;
                     case "mirror":       setMirror(c, true);  break;
-                    case "desktop":      setMirror(c, false); break;
+                    case "desktop":      if (ModuleState.enabled()) setMirror(c, false); break;
                     default: break;
                 }
                 if (isOrderedBroadcast()) {
                     int monitor = ExternalDisplayGate.present ? ExternalDisplayGate.externalId : -1;
                     StringBuilder sb = new StringBuilder();
                     sb.append("version=").append(BuildConfig.VERSION_NAME).append('\n');
+                    sb.append("enabled=").append(ModuleState.enabled() ? 1 : 0).append('\n');
                     sb.append("monitor=").append(monitor).append('\n');
                     sb.append("mirror=").append(mirrorSetting(c)).append('\n');
                     sb.append("profile=extend_companion\n");

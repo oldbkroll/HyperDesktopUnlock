@@ -1,4 +1,4 @@
-"""Check the system-unlock-only ownership boundary and unchanged upstream core hooks."""
+"""Check the system-unlock-only ownership boundary and runtime-gated core hooks."""
 from pathlib import Path
 import re
 import subprocess
@@ -9,12 +9,13 @@ source = root / 'app/src/main/java/io/maurizio/hyperdesktop'
 base = '397fa1a78d77a159b2ba6d518093ad0c9900922f'
 core = ['ConnectDialogHooks', 'DesktopModeHooks', 'SettingsGuardHooks',
         'MirrorPolicyHooks', 'SettingsHooks']
-for name in core:
-    path = source / (name + '.java')
-    original = subprocess.check_output(
-        ['git', 'show', f'{base}:{path.relative_to(root).as_posix()}'], cwd=root
-    ).decode('utf-8').replace('\r\n', '\n')
-    assert path.read_text(encoding='utf-8') == original, f'Core hook changed: {name}'
+for name in core + ['LauncherHooks']:
+    code = (source / (name + '.java')).read_text(encoding='utf-8')
+    assert 'ModuleState.enabled()' in code, f'Ungated hook: {name}'
+    assert 'XC_MethodReplacement.returnConstant' not in code
+    assert 'replaceHookedMethod' not in code
+    callbacks = re.findall(r'protected void (?:before|after)HookedMethod\(MethodHookParam p\) \{([^}]+)', code)
+    assert callbacks and all('ModuleState.enabled()' in body for body in callbacks), name
 
 all_code = '\n'.join(path.read_text(encoding='utf-8') for path in source.glob('*.java'))
 for api in ['setForcedDisplaySize', 'setForcedDisplayDensityForUser',
@@ -35,4 +36,4 @@ assert manifest.find('permission').get(android + 'protectionLevel') == 'signatur
 app = manifest.find('application')
 assert [s.get(android + 'name') for s in app.findall('service')] == ['.MonitorTile']
 assert not app.findall('provider')
-print('PASS: 5 core hooks unchanged; no display/input/power/Dock ownership; protected mirror control retained')
+print('PASS: runtime gate covers all mutating hooks; no display/input/power/Dock ownership; protected mirror control retained')

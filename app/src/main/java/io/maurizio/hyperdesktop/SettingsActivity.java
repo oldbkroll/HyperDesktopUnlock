@@ -35,6 +35,8 @@ import java.util.TreeSet;
 public class SettingsActivity extends Activity {
 
     private LinearLayout root;
+    private android.widget.Switch master;
+    private boolean updatingMaster;
     private TextView oldWarn;
     private Button oldButton;
     private ModuleClient.Callback modeUpdate;
@@ -61,6 +63,22 @@ public class SettingsActivity extends Activity {
         note(getString(R.string.companion_summary));
         note(getString(R.string.tiles_hint));
         section(R.string.section_monitor);
+        master = new android.widget.Switch(this);
+        master.setText(R.string.master_enabled);
+        master.setEnabled(false);
+        root.addView(master, matchWidth());
+        note(getString(R.string.master_hint));
+        master.setOnCheckedChangeListener((button, checked) -> {
+            if (updatingMaster) return;
+            master.setEnabled(false);
+            ModuleClient.send(this, checked ? "enable" : "disable", false, data -> {
+                modeUpdate.onResult(data);
+                Map<String, String> state = ModuleClient.parse(data);
+                if (state == null || !(checked ? "1" : "0").equals(state.get("enabled"))
+                        || (!checked && !"-1".equals(state.get("monitor")) && !"1".equals(state.get("mirror"))))
+                    Toast.makeText(this, R.string.mode_switch_failed, Toast.LENGTH_LONG).show();
+            });
+        });
         modeControls();
         section(R.string.section_diag);
         diagnosticsRow();
@@ -81,6 +99,12 @@ public class SettingsActivity extends Activity {
         modeUpdate = data -> {
             if (isFinishing() || isDestroyed()) return;
             Map<String, String> s = ModuleClient.parse(data);
+            boolean current = s != null && BuildConfig.VERSION_NAME.equals(s.get("version"));
+            boolean enabled = current && "1".equals(s.get("enabled"));
+            updatingMaster = true;
+            master.setChecked(enabled);
+            master.setEnabled(current);
+            updatingMaster = false;
             if (s != null && !BuildConfig.VERSION_NAME.equals(s.get("version"))) {
                 desktop.setEnabled(false);
                 mirror.setEnabled(false);
@@ -89,10 +113,10 @@ public class SettingsActivity extends Activity {
             }
             boolean connected = s != null && s.get("monitor") != null && !"-1".equals(s.get("monitor"));
             boolean mirrored = s != null && "1".equals(s.get("mirror"));
-            desktop.setEnabled(s != null && (connected || mirrored));
-            mirror.setEnabled(connected);
+            desktop.setEnabled(enabled && (connected || mirrored));
+            mirror.setEnabled(enabled && connected);
             status.setText(getString(s == null ? R.string.diag_no_answer
-                    : mirrored ? R.string.mode_status_mirroring
+                    : !enabled ? R.string.master_disabled : mirrored ? R.string.mode_status_mirroring
                     : connected ? R.string.mode_status_computer : R.string.tile_no_monitor));
         };
         desktop.setOnClickListener(v -> switchMode("desktop", desktop, mirror, modeUpdate));

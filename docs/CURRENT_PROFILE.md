@@ -1,3 +1,5 @@
+> 当前更新：第二版见 [REVISION_2.md](REVISION_2.md)。下文为第一版交付时的历史快照；剩余实机验证已按用户要求全部标记 SKIPPED。第二版构建与检查见该修订记录。
+
 # Extend 协同精简版
 
 版本：`1.12.8-extend-cn.1`（239）；包名 `io.github.the_marox.hyperdesktop`。本 Fork 的交付分支为 `codex/zh-cn-extend-companion`。
