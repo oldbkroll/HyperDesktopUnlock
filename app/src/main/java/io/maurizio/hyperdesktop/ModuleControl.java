@@ -67,12 +67,19 @@ final class ModuleControl {
                     case "flags_system_off": ModuleState.setDesktopFlags(c, false, false); break;
                     case "flags_ui_on":      ModuleState.setDesktopFlags(c, true, true); break;
                     case "flags_ui_off":     ModuleState.setDesktopFlags(c, true, false); break;
-                    case "enable":       ModuleState.setEnabled(c, true); break;
+                    case "enable":
+                        if (ModuleState.setEnabled(c, true)) SecondaryHomeHooks.cleanup(c);
+                        break;
                     case "disable":
                         if (ModuleState.setEnabled(c, false)) setMirror(c, true);
                         break;
                     case "mirror":       setMirror(c, true);  break;
-                    case "desktop":      if (ModuleState.enabled()) setMirror(c, false); break;
+                    case "desktop":
+                        if (ModuleState.enabled()) {
+                            setMirror(c, false);
+                            SecondaryHomeHooks.cleanup(c);
+                        }
+                        break;
                     default: break;
                 }
                 if (isOrderedBroadcast()) {
@@ -155,6 +162,13 @@ final class ModuleControl {
 
     // ------------------------------------------------------------------
     private static String concat(String a, String b) { return a == null ? b : a + b; }
+
+    static void requestSecondaryHomeCleanup() {
+        handler().postDelayed(() -> {
+            Context c = systemContext();
+            if (c != null) SecondaryHomeHooks.cleanup(c);
+        }, 300);
+    }
 
     private static boolean bootCompleted() {
         try {

@@ -32,6 +32,7 @@ public final class ExternalDisplayGate {
                     int id = displayIdOf(p.thisObject);
                     present = true;
                     externalId = id;
+                    ModuleControl.requestSecondaryHomeCleanup();
                     XLog.i("[gate] display esterno COLLEGATO (id " + id + ")");
                 }
             }
@@ -57,7 +58,7 @@ public final class ExternalDisplayGate {
         Diag.mark("gate", ctors > 0 && n > 0);
     }
 
-    private static boolean isExternal(Object displayContent) {
+    static boolean isExternal(Object displayContent) {
         int id = displayIdOf(displayContent);
         if (id == 0) return false;
         try {
