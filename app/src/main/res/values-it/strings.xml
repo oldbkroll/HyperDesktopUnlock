@@ -1,80 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="status_active">Le modifiche valgono subito. Riavviare serve solo dopo aver installato o aggiornato il modulo.</string>
-    <string name="status_unavailable">⚠ LSPosed non ha fornito una cartella per le impostazioni. Riavvia e riapri questa schermata.</string>
-    <string name="status_inactive">⚠ Il modulo non è attivo in LSPosed, quindi queste impostazioni non arrivano al sistema. Attivalo in LSPosed (ambito: Framework di sistema, Interfaccia di sistema, Impostazioni), riavvia e riapri questa schermata.</string>
-
-    <string name="section_dock">Dock</string>
-    <string name="auto_launch_title">Avvia il dock sul monitor</string>
-    <string name="auto_launch_summary">Apre il desktop del dock sul monitor quando scegli Computer.</string>
-    <string name="launcher_pkg_title">App del dock (nome del pacchetto)</string>
-    <string name="launcher_pkg_summary">SmartDock: cu.axel.smartdock · Taskbar: com.farmerbb.taskbar</string>
-    <string name="extra_apps_title">Apri anche sul monitor</string>
-    <string name="extra_apps_summary">App da aprire sul monitor dopo il dock, al collegamento. Nomi dei pacchetti separati da spazi o virgole.</string>
-    <string name="extra_apps_hint">com.android.chrome, org.videolan.vlc</string>
-    <string name="manage_a11y_title">Gestisci il servizio di accessibilità del dock</string>
-    <string name="manage_a11y_summary">Lo attiva quando parte il desktop e lo spegne quando stacchi il cavo, così il dock non compare mai sul telefono.</string>
-
-    <string name="section_phone">Telefono</string>
-    <string name="phone_off_title">Spegni lo schermo del telefono in modalità desktop</string>
-    <string name="phone_off_summary">Il telefono resta acceso. Premi due volte il tasto di accensione, o Win+P, per riavere lo schermo.</string>
-    <string name="touchpad_title">Usa il telefono come touchpad</string>
-    <string name="touchpad_summary">Quando lo schermo del telefono si spegne in modalità desktop, resta nero ma continua a rispondere al tocco: un dito muove il puntatore sul monitor, un tocco fa clic, due dita scorrono, un tocco con due dita è il clic destro; per trascinare tocca una volta, poi tocca e muovi. Tre dita o Win+P ti ridanno il telefono. Consuma un po\' più batteria dello schermo spento del tutto.</string>
-    <string name="touchpad_sens_title">Sensibilità del touchpad: %1$d su %2$d</string>
-    <string name="touchpad_sens_summary">Più alta = il puntatore si sposta di più a parità di movimento del dito. Vale appena rilasci il cursore, anche con il touchpad attivo. Si sommano anche velocità e accelerazione del puntatore di sistema.</string>
-    <string name="keep_awake_title">Tieni acceso il monitor</string>
-    <string name="keep_awake_summary">Ignora lo spegnimento automatico dello schermo in modalità desktop. Attivalo se il monitor si spegne quando non usi mouse o tastiera. Il tasto di accensione funziona comunque.</string>
 
     <string name="section_monitor">Monitor</string>
-    <string name="density_title">Densità del monitor (dpi)</string>
-    <string name="density_summary">Più alto = più grande. Sui monitor 4K di solito va bene tra 240 e 360. 0 = valore predefinito del monitor; lascia vuoto per non cambiarla mai.</string>
-    <string name="density_invalid">Inserisci 0 o un valore tra 100 e 800</string>
-    <string name="field_apply">Applica</string>
-    <string name="field_saved">Salvato. Applicato subito se il monitor è collegato, altrimenti al prossimo collegamento.</string>
-    <string name="field_cleared">Fatto: il modulo non cambierà più questo parametro.</string>
-    <string name="resolution_title">Risoluzione del monitor</string>
-    <string name="resolution_summary">Risoluzione logica, es. 2560x1440 o 1920x1080. Più bassa = interfaccia più grande e GPU più scarica. 0 = nativa; vuoto = lascia com\'è.</string>
-    <string name="resolution_invalid">Usa LARGHEZZAxALTEZZA (es. 1920x1080), oppure 0</string>
-    <string name="refresh_title">Frequenza del monitor (Hz)</string>
-    <string name="refresh_summary">Applicata solo se il monitor la supporta alla risoluzione attuale (es. 60). 0 = nativa; vuoto = lascia com\'è.</string>
-    <string name="refresh_invalid">Inserisci una frequenza (es. 60), oppure 0</string>
-    <string name="choose_leave">Non cambiare</string>
-    <string name="choose_native">Nativa</string>
-    <string name="modes_hint">Collega il monitor per scegliere tra le modalità che supporta. Fino ad allora puoi digitarle.</string>
 
-    <string name="section_keyboard">Tastiera</string>
-    <string name="shortcuts_title">Scorciatoie da tastiera del desktop</string>
-    <string name="switcher_title">Barra anteprima Alt+Tab</string>
-    <string name="switcher_summary">Tieni premuto Alt per vedere le app aperte sul monitor e rilascia Alt per passare a quella scelta. Spenta = cambio immediato a ogni Tab.</string>
     <string name="old_package_warning">La vecchia versione di HyperDesktop Unlock (io.maurizio.hyperdesktop, fino alla 1.12.7) è ancora installata. Disinstallala: con entrambe attive in LSPosed ogni hook verrebbe eseguito due volte. Poi controlla che questa versione sia attiva in LSPosed (Framework di sistema, UI di sistema, Impostazioni) e riavvia.</string>
     <string name="old_package_button">Disinstalla la vecchia versione</string>
-    <string name="ime_warning">Attenzione: è attivo \"Mostra tastiera virtuale\" con la tastiera fisica. In alcune app sul monitor le lettere che scrivi compaiono solo dopo aver bloccato e sbloccato il telefono (Canc e Backspace funzionano comunque).</string>
-    <string name="ime_warning_button">Disattivalo</string>
-    <string name="ime_warning_done">\"Mostra tastiera virtuale\" disattivato</string>
-    <string name="ime_warning_failed">Non è stato possibile cambiarlo: disattiva \"Mostra tastiera virtuale\" nelle impostazioni della tastiera fisica</string>
-    <string name="fit_status_bar_title">App sotto la barra di stato del monitor (sperimentale)</string>
-    <string name="fit_status_bar_summary">Alcune app (per esempio la barra delle schede di un browser) disegnano sotto la barra di stato del monitor, che ne copre la parte alta. Attivo = le finestre delle app sul monitor iniziano sotto la barra; i video a schermo intero restano a schermo intero. Vale per le app aperte dopo averlo attivato.</string>
-    <string name="shortcuts_list">Alt+Tab · Alt+Maiusc+Tab — cambia app sul monitor\nStamp · Win+Maiusc+S — screenshot del monitor\nWin+Maiusc+freccia — sposta un\'app tra monitor e telefono\nAlt+F4 — chiudi l\'app sul monitor\nWin+D — mostra il desktop del dock\nWin+Backspace — Indietro\nWin+1…9 — metti a fuoco l\'ennesima app\nWin+P — schermo del telefono acceso/spento</string>
 
-    <string name="section_updates">Aggiornamenti</string>
-    <string name="updates_checking">Controllo aggiornamenti…</string>
-    <string name="updates_latest">Hai l\'ultima versione (v%1$s).</string>
-    <string name="updates_available">Aggiornamento disponibile: %1$s — tocca per aprire le Release.</string>
-    <string name="updates_error">Impossibile controllare gli aggiornamenti — tocca per aprire le Release.</string>
-
-    <string name="touchpad_back_title">Gesto indietro sul touchpad</string>
-    <string name="touchpad_back_summary">Scorri dal bordo sinistro o destro del telefono verso il centro per tornare indietro sul monitor, come sul telefono. Disattivalo se ti intralcia quando muovi il puntatore partendo dai bordi.</string>
-    <string name="phone_keyboard_title">Tastiera sul telefono</string>
-    <string name="phone_keyboard_summary">Con il touchpad attivo, toccando un campo di testo sul monitor la tastiera a schermo compare sul telefono, sotto il touchpad. Con una tastiera fisica collegata Android non la mostra.</string>
-    <string name="tiles_hint">Impostazioni rapide: modificando i riquadri nel pannello notifiche puoi aggiungere \"Monitor\" (Computer ↔ Mirroring) e \"Touchpad\".</string>
+    <string name="tiles_hint">Impostazioni rapide: aggiungi il riquadro Monitor per passare da Computer a Mirroring.</string>
     <string name="section_diag">Diagnostica</string>
     <string name="diag_checking">Controllo del modulo nel sistema…</string>
-    <string name="diag_ok">Modulo attivo nel sistema (v%1$s), tutte le parti agganciate.</string>
+    <string name="diag_ok">Il modulo risponde (v%1$s); System Framework e System UI non segnalano hook mancanti.</string>
     <string name="diag_reboot">Nel sistema gira ancora la v%1$s: riavvia per usare la v%2$s.</string>
     <string name="diag_missing">Alcune parti non si sono agganciate: %1$s. Crea un report e apri una segnalazione su GitHub.</string>
     <string name="diag_no_answer">Il sistema non risponde: il modulo non è ancora caricato. Riavvia dopo averlo installato o aggiornato (dopo un riavvio serve circa un minuto).</string>
     <string name="diag_report_button">Crea report diagnostico</string>
-    <string name="diag_note">Il report contiene il modello del telefono, la versione di Android e HyperOS, queste impostazioni, le ultime righe di log del modulo e, se c\'è un monitor collegato, le app e i titoli delle finestre aperte su di esso. Non viene inviato da solo: sei tu a copiarlo o condividerlo.</string>
+    <string name="diag_note">Il report contiene modello, versioni Android e HyperOS, profilo del modulo, log tecnici recenti e, con un monitor collegato, pacchetti e titoli delle finestre. Nulla viene inviato automaticamente: scegli tu se copiarlo o condividerlo. Log e identificatori API conservano la lingua originale.</string>
     <string name="diag_collecting">Raccolta in corso…</string>
     <string name="diag_report_title">Report diagnostico</string>
     <string name="diag_copy">Copia</string>
@@ -85,12 +25,9 @@
     <string name="tile_monitor">Monitor</string>
     <string name="tile_computer">Computer</string>
     <string name="tile_mirroring">Mirroring</string>
-    <string name="tile_touchpad">Touchpad</string>
-    <string name="tile_on">Attivo</string>
-    <string name="tile_off">Spento</string>
     <string name="tile_no_monitor">Nessun monitor</string>
     <string name="tile_not_active">Modulo non attivo</string>
-    <string name="app_name">HyperDesktop Unlock</string>
+    <string name="app_name">HyperDesktop Unlock · Extend</string>
     <string name="xposed_desc">Rende indipendente il monitor esterno su Xiaomi HyperOS 4 / Android 17: ripristina il pulsante Desktop e impedisce il mirroring forzato.</string>
     <string name="report_phone">"Telefono: "</string>
     <string name="report_build">"build "</string>
@@ -99,4 +36,11 @@
     <string name="report_settings">Impostazioni:</string>
     <string name="report_issue_template">**Descrizione del problema**\n\n\n**Report diagnostico** (copiato: incollalo nel blocco seguente)\n\n```\n\n```\n</string>
     <string name="report_subject">Report HyperDesktop Unlock</string>
+    <string name="companion_summary">Versione per Extend: sblocca solo il display esterno indipendente. Usa Extend per avviare app, configurare display, input e schermo del telefono. La compatibilità richiede prove sul dispositivo.</string>
+    <string name="companion_scope">Solo sblocco; i controlli della sessione sono gestiti da Extend</string>
+    <string name="mode_switch_desktop">Usa display indipendente (Computer)</string>
+    <string name="mode_switch_mirror">Ripristina mirroring</string>
+    <string name="mode_status_computer">Display indipendente selezionato</string>
+    <string name="mode_status_mirroring">Mirroring selezionato</string>
+    <string name="mode_switch_failed">Il sistema non ha confermato il cambio. Controlla il collegamento e la diagnostica.</string>
 </resources>

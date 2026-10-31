@@ -1,4 +1,12 @@
-# HyperDesktop Unlock
+# HyperDesktop Unlock — Extend companion fork
+
+本分支提供 **Extend 协同精简版**：系统解锁、独立/镜像切换和诊断；显示参数、应用启动、触控板与内屏控制由 Extend 管理。支持简体中文。自编译测试包使用 debug 签名，目标手机的实际兼容性待验证。
+
+See [current profile, build checks and recovery](docs/CURRENT_PROFILE.md) and the [architecture audit](docs/ARCHITECTURE_AND_PLAN.md). The upstream README below is retained for historical context; the current profile describes this branch.
+
+---
+
+# HyperDesktop Unlock (upstream background)
 
 An LSPosed module that turns an external monitor into a **separate display**
 (not a mirror) on Xiaomi phones running **HyperOS 4 (Android 17)**, where

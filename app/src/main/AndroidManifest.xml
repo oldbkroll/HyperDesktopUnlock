@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Solo l'app del modulo (stessa firma) puo' chiedere a system_server di
-         riapplicare subito le impostazioni (densita' del monitor, tieni acceso). -->
+    <!-- Signature-protected explicit mode commands and diagnostic requests. -->
     <permission
         android:name="${applicationId}.permission.APPLY_SETTINGS"
         android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.APPLY_SETTINGS" />
-    <!-- Solo l'app (SettingsActivity) la usa, per il controllo aggiornamenti su GitHub -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Il pacchetto usato fino alla 1.12.7: l'app avvisa se e' ancora installato -->
     <queries>
         <package android:name="io.maurizio.hyperdesktop" />
@@ -33,11 +30,6 @@
         <meta-data
             android:name="xposedscope"
             android:resource="@array/xposed_scope" />
-        <!-- Preferenze dell'app leggibili dagli hook (XSharedPreferences di LSPosed) -->
-        <meta-data
-            android:name="xposedsharedprefs"
-            android:value="true" />
-
         <!-- Impostazioni: dal cassetto app e dal pulsante del modulo in LSPosed -->
         <activity
             android:name=".SettingsActivity"
@@ -53,7 +45,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Riquadri delle impostazioni rapide: Computer <-> Mirroring e Touchpad -->
+        <!-- Riquadri delle impostazioni rapide: Computer <-> Mirroring -->
         <service
             android:name=".MonitorTile"
             android:exported="true"
@@ -67,27 +59,5 @@
                 android:name="android.service.quicksettings.TOGGLEABLE_TILE"
                 android:value="true" />
         </service>
-        <service
-            android:name=".TouchpadTile"
-            android:exported="true"
-            android:icon="@drawable/ic_tile_touchpad"
-            android:label="@string/tile_touchpad"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
-                android:value="true" />
-        </service>
-
-        <!-- Salva gli screenshot del monitor per conto di system_server.
-             INTERACT_ACROSS_USERS_FULL: le app di terze parti non possono
-             ottenerlo, il sistema lo supera sempre. -->
-        <provider
-            android:name=".ShotProvider"
-            android:authorities="${applicationId}.shots"
-            android:exported="true"
-            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 </manifest>

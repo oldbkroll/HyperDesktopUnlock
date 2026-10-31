@@ -5,12 +5,10 @@
  */
 package io.maurizio.hyperdesktop;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -84,14 +82,6 @@ final class ModuleClient {
             if (eq > 0) m.put(line.substring(0, eq), line.substring(eq + 1));
         }
         return m;
-    }
-
-    /** Preferenze del modulo leggibili dagli hook; null se LSPosed non attiva il modulo. */
-    @SuppressLint("WorldReadableFiles")
-    @SuppressWarnings("deprecation")
-    static SharedPreferences prefs(Context ctx) {
-        try { return ctx.getSharedPreferences(Prefs.FILE, Context.MODE_WORLD_READABLE); }
-        catch (Throwable t) { return null; }
     }
 
     private ModuleClient() {}

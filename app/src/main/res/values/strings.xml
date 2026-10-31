@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HyperDesktop Unlock</string>
+    <string name="app_name">HyperDesktop Unlock · Extend</string>
     <string name="xposed_desc">Turns an external monitor into a separate display (no mirroring) on Xiaomi HyperOS 4 / Android 17: restores the hidden Desktop button and neutralises the mirroring enforcer.</string>
 
     <!-- Scope suggerito al momento dell'attivazione in LSPosed -->
@@ -11,81 +11,21 @@
     </string-array>
 
     <!-- Impostazioni -->
-    <string name="status_active">Changes take effect right away. A reboot is only needed after installing or updating the module.</string>
-    <string name="status_unavailable">⚠ LSPosed did not provide a place to store the settings. Reboot and open this screen again.</string>
-    <string name="status_inactive">⚠ The module is not active in LSPosed, so these settings can\'t reach the system. Enable it in LSPosed (scope: System Framework, System UI, Settings), reboot, then open this screen again.</string>
-
-    <string name="section_dock">Dock</string>
-    <string name="auto_launch_title">Start the dock on the monitor</string>
-    <string name="auto_launch_summary">Opens the dock\'s desktop on the monitor when you choose Computer.</string>
-    <string name="launcher_pkg_title">Dock app (package name)</string>
-    <string name="launcher_pkg_summary">SmartDock: cu.axel.smartdock · Taskbar: com.farmerbb.taskbar</string>
-    <string name="extra_apps_title">Also open on the monitor</string>
-    <string name="extra_apps_summary">Apps to launch on the monitor after the dock, on connect. Package names separated by spaces or commas.</string>
-    <string name="extra_apps_hint">com.android.chrome, org.videolan.vlc</string>
-    <string name="manage_a11y_title">Manage the dock\'s accessibility service</string>
-    <string name="manage_a11y_summary">Turns it on when the desktop starts and off when you unplug, so the dock never shows up on the phone.</string>
-
-    <string name="section_phone">Phone</string>
-    <string name="phone_off_title">Turn off the phone screen in desktop mode</string>
-    <string name="phone_off_summary">The phone stays awake. Press power twice, or Win+P, to get its screen back.</string>
-    <string name="touchpad_title">Use the phone as a touchpad</string>
-    <string name="touchpad_summary">When the phone screen turns off in desktop mode, it stays black but keeps responding to touch: one finger moves the pointer on the monitor, tap to click, two fingers to scroll, two-finger tap to right-click, tap and then touch and move to drag. Three fingers or Win+P give you the phone back. Uses a little more battery than turning the screen fully off.</string>
-    <string name="touchpad_sens_title">Touchpad sensitivity: %1$d of %2$d</string>
-    <string name="touchpad_sens_summary">Higher = the pointer travels further for the same finger movement. Applied when you let go of the slider, even while the touchpad is on. The system\'s pointer speed and acceleration also apply.</string>
-    <string name="keep_awake_title">Keep the monitor on</string>
-    <string name="keep_awake_summary">Ignores the screen timeout in desktop mode. Turn this on if the monitor goes dark while you aren\'t using the mouse or keyboard. The power button still works.</string>
 
     <string name="section_monitor">Monitor</string>
-    <string name="density_title">Monitor density (dpi)</string>
-    <string name="density_summary">Higher = bigger. 4K monitors usually look right between 240 and 360. 0 = the monitor\'s default; leave empty to never change it.</string>
-    <string name="density_invalid">Enter 0 or a value between 100 and 800</string>
-    <string name="field_apply">Apply</string>
-    <string name="field_saved">Saved. Applied now if the monitor is connected, otherwise on the next connection.</string>
-    <string name="field_cleared">Done — the module will not change this any more.</string>
-    <string name="resolution_title">Monitor resolution</string>
-    <string name="resolution_summary">Logical resolution, e.g. 2560x1440 or 1920x1080. Lower = bigger UI and lighter on the GPU. 0 = native, empty = leave as is.</string>
-    <string name="resolution_invalid">Use WIDTHxHEIGHT (e.g. 1920x1080), or 0</string>
-    <string name="refresh_title">Monitor refresh rate (Hz)</string>
-    <string name="refresh_summary">Only applied if the monitor reports it at the current resolution (e.g. 60). 0 = native, empty = leave as is.</string>
-    <string name="refresh_invalid">Enter a refresh rate (e.g. 60), or 0</string>
-    <string name="choose_leave">Leave as is</string>
-    <string name="choose_native">Native</string>
-    <string name="modes_hint">Connect the monitor to pick from the modes it supports. Until then you can type them.</string>
 
-    <string name="section_keyboard">Keyboard</string>
-    <string name="shortcuts_title">Desktop keyboard shortcuts</string>
-    <string name="switcher_title">Alt+Tab preview bar</string>
-    <string name="switcher_summary">Hold Alt to see the open apps on the monitor and release Alt to switch. Off = switch instantly on each Tab.</string>
     <string name="old_package_warning">The old version of HyperDesktop Unlock (io.maurizio.hyperdesktop, up to 1.12.7) is still installed. Uninstall it: with both enabled in LSPosed every hook would run twice. Then make sure this version is enabled in LSPosed (System Framework, System UI, Settings) and reboot.</string>
     <string name="old_package_button">Uninstall the old version</string>
-    <string name="ime_warning">Warning: \"Show on-screen keyboard\" is on while a physical keyboard is used. In some apps on the monitor the letters you type only show up after you lock and unlock the phone (Delete and Backspace still work).</string>
-    <string name="ime_warning_button">Turn it off</string>
-    <string name="ime_warning_done">\"Show on-screen keyboard\" turned off</string>
-    <string name="ime_warning_failed">Couldn\'t change it: turn off \"Show on-screen keyboard\" in the physical keyboard settings</string>
-    <string name="fit_status_bar_title">Keep apps below the monitor\'s status bar (experimental)</string>
-    <string name="fit_status_bar_summary">Some apps (a browser\'s tab strip, for example) draw under the status bar on the monitor, and the bar covers their top. On = app windows on the monitor start below the bar; full-screen videos stay full screen. Applies to apps opened after you turn it on.</string>
-    <string name="shortcuts_list">Alt+Tab · Alt+Shift+Tab — switch apps on the monitor\nPrint Screen · Win+Shift+S — screenshot of the monitor\nWin+Shift+Arrow — move an app between monitor and phone\nAlt+F4 — close the app on the monitor\nWin+D — show the dock\'s desktop\nWin+Backspace — Back\nWin+1…9 — focus the Nth app\nWin+P — phone screen on/off</string>
 
-    <string name="section_updates">Updates</string>
-    <string name="updates_checking">Checking for updates…</string>
-    <string name="updates_latest">You are on the latest version (v%1$s).</string>
-    <string name="updates_available">Update available: %1$s — tap to open Releases.</string>
-    <string name="updates_error">Could not check for updates — tap to open Releases.</string>
-
-    <string name="touchpad_back_title">Back gesture on the touchpad</string>
-    <string name="touchpad_back_summary">Swipe from the left or right edge of the phone towards the centre to go back on the monitor, like on the phone. Turn it off if it gets in the way when you move the pointer from the edges.</string>
-    <string name="phone_keyboard_title">Keyboard on the phone</string>
-    <string name="phone_keyboard_summary">With the touchpad on, tapping a text field on the monitor shows the on-screen keyboard on the phone, below the touchpad. With a physical keyboard connected Android doesn\'t show it.</string>
-    <string name="tiles_hint">Quick Settings: edit the tiles in the notification shade to add \"Monitor\" (Computer ↔ Mirroring) and \"Touchpad\".</string>
+    <string name="tiles_hint">Quick Settings: add the Monitor tile to switch Computer ↔ Mirroring.</string>
     <string name="section_diag">Diagnostics</string>
     <string name="diag_checking">Checking the module in the system…</string>
-    <string name="diag_ok">Module running in the system (v%1$s), all parts attached.</string>
+    <string name="diag_ok">System module responding (v%1$s); System Framework and System UI reported no missing hooks.</string>
     <string name="diag_reboot">The system is still running v%1$s: reboot to start v%2$s.</string>
     <string name="diag_missing">Some parts did not attach: %1$s. Create a report and open an issue on GitHub.</string>
     <string name="diag_no_answer">The system did not answer: the module is not loaded yet. Reboot after installing or updating it (after a reboot it needs about a minute).</string>
     <string name="diag_report_button">Create diagnostic report</string>
-    <string name="diag_note">The report contains your phone model, Android and HyperOS version, these settings, the module\'s recent log lines and, if a monitor is connected, the apps and window titles open on it. Nothing is sent by itself: you choose to copy or share it.</string>
+    <string name="diag_note">The report contains your phone model, Android and HyperOS version, the module profile, recent technical logs and, if a monitor is connected, its app packages and window titles. Nothing is sent automatically: you choose to copy or share it. Raw logs and API identifiers keep their original language.</string>
     <string name="diag_collecting">Collecting…</string>
     <string name="diag_report_title">Diagnostic report</string>
     <string name="diag_copy">Copy</string>
@@ -96,9 +36,6 @@
     <string name="tile_monitor">Monitor</string>
     <string name="tile_computer">Computer</string>
     <string name="tile_mirroring">Mirroring</string>
-    <string name="tile_touchpad">Touchpad</string>
-    <string name="tile_on">On</string>
-    <string name="tile_off">Off</string>
     <string name="tile_no_monitor">No monitor</string>
     <string name="tile_not_active">Module not active</string>
     <string name="report_phone">"Phone: "</string>
@@ -108,4 +45,11 @@
     <string name="report_settings">Settings:</string>
     <string name="report_issue_template">**What happened**\n\n\n**Diagnostic report** (copied by the app: paste it between the lines)\n\n```\n\n```\n</string>
     <string name="report_subject">HyperDesktop Unlock report</string>
+    <string name="companion_summary">Extend companion build: unlocks independent external displays only. Use Extend to launch apps, configure displays, control input and manage the phone screen. Desktop windowing and firmware compatibility still require device testing.</string>
+    <string name="companion_scope">Unlock only; session controls belong to Extend</string>
+    <string name="mode_switch_desktop">Use independent display (Computer)</string>
+    <string name="mode_switch_mirror">Return to mirroring</string>
+    <string name="mode_status_computer">Independent display selected</string>
+    <string name="mode_status_mirroring">Mirroring selected</string>
+    <string name="mode_switch_failed">The system did not confirm the mode change. Check the connection and module diagnostics.</string>
 </resources>

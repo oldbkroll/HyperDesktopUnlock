@@ -20,35 +20,11 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-/**
- * Comandi dall'app del modulo (riquadri delle impostazioni rapide, schermata
- * Diagnostica) verso system_server e SystemUI.
- *
- * L'app manda un broadcast ORDINATO con Prefs.ACTION_COMMAND e l'extra "cmd". Solo
- * chi ha il permesso con firma del modulo puo' mandarlo (i ricevitori lo esigono),
- * e il risultato torna solo a chi l'ha mandato. Ogni processo agganciato aggiunge
- * la sua parte al risultato:
- *
- *   status            -> stato: versione caricata, monitor, mirroring, telefono,
- *                        "mostra tastiera virtuale con la tastiera fisica" (show_ime)
- *   (extra diag=true) -> in piu' la riga [diag] e le ultime righe di log del processo
- *   report            -> come status con diag=true, piu' la disposizione del monitor
- *                        (MonitorLayout): solo quando l'utente crea il report
- *   mirror / desktop  -> monitor in mirroring / di nuovo in desktop (riquadro "Monitor")
- *   touchpad_on/_off  -> telefono come touchpad adesso / telefono normale (riquadro "Touchpad")
- *   show_ime_off      -> spegne "mostra tastiera virtuale" (avviso nelle impostazioni):
- *                        acceso, blocca le lettere della tastiera fisica nelle app sul monitor
- *
- * In system_server il ricevitore si registra a fine avvio (sys.boot_completed);
- * in SystemUI quando parte l'Application.
- */
+/** Signature-protected status/report and explicit Computer/Mirroring commands only. */
 final class ModuleControl {
 
     private static final int BOOT_POLL_MS = 10_000;
     private static final int MAX_ATTEMPTS = 60;
-    /** Settings.Secure.SHOW_IME_WITH_HARD_KEYBOARD (@hide). */
-    static final String KEY_SHOW_IME = "show_ime_with_hard_keyboard";
-
     private static Handler handler;
     private static boolean registered;
     private static int attempts;
@@ -83,17 +59,12 @@ final class ModuleControl {
     private static final BroadcastReceiver SYSTEM_RECEIVER = new BroadcastReceiver() {
         @Override public void onReceive(Context c, Intent i) {
             String cmd = "status";
-            boolean imeOff = false;
             try {
                 String c0 = i.getStringExtra(Prefs.EXTRA_CMD);
                 if (c0 != null) cmd = c0;
-                Prefs.refresh();
                 switch (cmd) {
                     case "mirror":       setMirror(c, true);  break;
                     case "desktop":      setMirror(c, false); break;
-                    case "touchpad_on":  PhoneScreen.touchpadNow(true);  break;
-                    case "touchpad_off": PhoneScreen.touchpadNow(false); break;
-                    case "show_ime_off": imeOff = showImeOff(c); break;
                     default: break;
                 }
                 if (isOrderedBroadcast()) {
@@ -102,10 +73,7 @@ final class ModuleControl {
                     sb.append("version=").append(BuildConfig.VERSION_NAME).append('\n');
                     sb.append("monitor=").append(monitor).append('\n');
                     sb.append("mirror=").append(mirrorSetting(c)).append('\n');
-                    sb.append("phone=").append(PhoneScreen.state()).append('\n');
-                    sb.append("touchpad=").append(Touchpad.active).append('\n');
-                    // appena scritto da qui: niente rilettura (una cache vecchia darebbe un falso "fallito")
-                    sb.append("show_ime=").append(imeOff ? 0 : secureInt(c, KEY_SHOW_IME)).append('\n');
+                    sb.append("profile=extend_companion\n");
                     if (i.getBooleanExtra(Prefs.EXTRA_DIAG, false)) {
                         sb.append("\n=== system_server ===\n").append(Diag.last).append("\n\n");
                         if ("report".equals(cmd)) {
@@ -134,31 +102,6 @@ final class ModuleControl {
         try { Settings.Secure.putInt(cr, SettingsGuardHooks.KEY_MIRROR, mirror ? 1 : 0); }
         finally { SettingsGuardHooks.USER_WRITE.remove(); }
         XLog.i("[control] monitor -> " + (mirror ? "MIRRORING" : "DESKTOP") + " (riquadro)");
-        if (mirror) {
-            PhoneScreen.onMirroring();             // il monitor ripete il telefono: deve essere acceso
-            DockAccessibility.onExternalRemoved(); // e il dock non deve comparire sul telefono
-        } else {
-            resumeDesktop(c, 0);
-        }
-    }
-
-    /** Di ritorno al desktop: dock e sessione come dopo la scelta "Computer". */
-    private static void resumeDesktop(final Context c, final int tries) {
-        handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                if (!ExternalDisplayGate.present) {
-                    if (tries < 16) resumeDesktop(c, tries + 1);
-                    else XLog.i("[control] nessun monitor in desktop dopo il cambio");
-                    return;
-                }
-                DockAccessibility.onExternalAdded();
-                PhoneScreen.onDesktopResumed();
-                if (!Prefs.autoLaunch()) return;
-                // come dopo la scelta "Computer": il desktop si apre quando il servizio
-                // del dock e' collegato (vedi LauncherHooks)
-                LauncherHooks.launchWhenReady(c, handler(), true, 0, "riquadro Monitor");
-            }
-        }, tries == 0 ? 1500 : 500);
     }
 
     private static int mirrorSetting(Context c) {
@@ -169,25 +112,6 @@ final class ModuleControl {
     private static int secureInt(Context c, String key) {
         try { return Settings.Secure.getInt(c.getContentResolver(), key, -1); }
         catch (Throwable t) { return -1; }
-    }
-
-    /**
-     * "Mostra tastiera virtuale" acceso con la tastiera fisica: la tastiera del
-     * sistema tiene aperta una sessione a schermo per l'app sul monitor e le
-     * lettere vi restano bloccate finche' non si blocca e sblocca il telefono.
-     * Si spegne solo su richiesta dell'utente (pulsante dell'avviso nell'app).
-     * @return true se ora e' spento
-     */
-    private static boolean showImeOff(Context c) {
-        if (secureInt(c, KEY_SHOW_IME) == 0) return true;
-        try {
-            if (!Settings.Secure.putInt(c.getContentResolver(), KEY_SHOW_IME, 0)) return false;
-            XLog.i("[control] 'mostra tastiera virtuale' spento dall'app");
-            return true;
-        } catch (Throwable t) {
-            XLog.e("[control] spegnimento di 'mostra tastiera virtuale' fallito", t);
-            return false;
-        }
     }
 
     // ------------------------------------------------------------------

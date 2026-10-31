@@ -13,18 +13,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-/**
- * Tiene traccia (in system_server) della presenza di un display ESTERNO
- * fisico, agganciando creazione e rimozione dei DisplayContent del WindowManager.
- *
- * E' l'interruttore di tutte le funzioni "di sessione" (schermo del telefono,
- * servizio del dock, densita', tieni acceso, scorciatoie): valgono solo mentre
- * un monitor e' collegato, cosi' l'avvio del telefono senza monitor resta
- * identico a quello di serie.
- *
- * Gli hook girano con il lock globale del WindowManager: qui si aggiornano solo
- * i campi e si avvisano i gestori, che fanno il lavoro vero su thread propri.
- */
+/** Read-only physical external-display tracking for status and manual mirror recovery. */
 public final class ExternalDisplayGate {
 
     /** true mentre almeno un display esterno fisico e' collegato. */
@@ -36,8 +25,6 @@ public final class ExternalDisplayGate {
     public static void hook(LoadPackageParam lp) {
         Class<?> dc = XposedHelpers.findClassIfExists("com.android.server.wm.DisplayContent", lp.classLoader);
         if (dc == null) { XLog.i("[gate] DisplayContent non trovata"); Diag.mark("gate", false); return; }
-        PhoneScreen.init(lp.classLoader);
-        DockAccessibility.scheduleBootCheck();
 
         int ctors = XposedBridge.hookAllConstructors(dc, new XC_MethodHook() {
             @Override protected void afterHookedMethod(MethodHookParam p) {
@@ -46,9 +33,6 @@ public final class ExternalDisplayGate {
                     present = true;
                     externalId = id;
                     XLog.i("[gate] display esterno COLLEGATO (id " + id + ")");
-                    DockAccessibility.onExternalAdded();
-                    PhoneScreen.onExternalAdded();
-                    DesktopSession.onExternalAdded(id);
                 }
             }
         }).size();
@@ -63,9 +47,6 @@ public final class ExternalDisplayGate {
                             present = false;
                             externalId = -1;
                             XLog.i("[gate] display esterno RIMOSSO");
-                            PhoneScreen.onExternalRemoved();
-                            DockAccessibility.onExternalRemoved();
-                            DesktopSession.onExternalRemoved();
                         }
                     }
                 });
@@ -74,79 +55,6 @@ public final class ExternalDisplayGate {
         }
         XLog.i("[gate] hook installati (" + ctors + " costruttori + " + n + " metodi di rimozione)");
         Diag.mark("gate", ctors > 0 && n > 0);
-        hookImePolicy(dc);
-    }
-
-    /**
-     * Tastiera sul telefono: mentre il touchpad e' attivo il monitor risponde
-     * "tastiera sul display principale" (FALLBACK_DISPLAY). Solo in memoria: non
-     * tocca le impostazioni salvate, e smette appena il touchpad si chiude.
-     * Gira sotto il lock del WindowManager: legge solo campi volatili.
-     */
-    private static void hookImePolicy(Class<?> dc) {
-        int n = 0;
-        for (Method m : dc.getDeclaredMethods()) {
-            if (!m.getName().equals("getImePolicy") || m.getParameterTypes().length != 0) continue;
-            try {
-                XposedBridge.hookMethod(m, new XC_MethodHook() {
-                    @Override protected void afterHookedMethod(MethodHookParam p) {
-                        if (!Touchpad.active || !Touchpad.keyboardOnPhone || !Touchpad.imeProbeOk || !Touchpad.softKeyboardWanted) return;
-                        int id = externalId;
-                        if (id > 0 && displayIdOf(p.thisObject) == id) {
-                            p.setResult(1);   // WindowManager.DISPLAY_IME_POLICY_FALLBACK_DISPLAY
-                            if (imeLogged++ < 12) XLog.i("[ime] politica del monitor: tastiera sul telefono");
-                        }
-                    }
-                });
-                n++;
-            } catch (Throwable t) { XLog.e("[gate] hook getImePolicy fallito", t); }
-        }
-        int imms = hookImeDisplayChoice(dc.getClassLoader());
-        XLog.i("[gate] tastiera sul telefono: " + n + " hook su getImePolicy, " + imms + " sulla scelta del servizio tastiere");
-        Diag.mark("ime-on-phone", n + imms > 0);
-    }
-
-    /** Righe [ime] gia' scritte in questa sessione del touchpad (azzerato da Touchpad.show). */
-    static volatile int imeLogged;
-
-    /**
-     * Il servizio delle tastiere (InputMethodManagerService) puo' decidere lo
-     * schermo senza richiedere ogni volta la politica al window manager (la tiene
-     * in memoria per display). Si aggancia il punto finale della scelta:
-     * computeImeDisplayIdForTarget(displayId, ...) -> display su cui mostrarla.
-     */
-    private static int hookImeDisplayChoice(ClassLoader cl) {
-        String[] classes = {
-            "com.android.server.inputmethod.InputMethodManagerService",
-            "com.android.server.inputmethod.InputMethodBindingController",
-            "com.android.server.inputmethod.ImeVisibilityStateComputer",
-            "com.android.server.inputmethod.InputMethodUtils",
-        };
-        int n = 0;
-        for (String cn : classes) {
-            Class<?> c = XposedHelpers.findClassIfExists(cn, cl);
-            if (c == null) continue;
-            for (Method m : c.getDeclaredMethods()) {
-                Class<?>[] pt = m.getParameterTypes();
-                if (!m.getName().contains("computeImeDisplayId") || pt.length == 0 || pt[0] != int.class
-                        || m.getReturnType() != int.class) continue;
-                try {
-                    XposedBridge.hookMethod(m, new XC_MethodHook() {
-                        @Override protected void afterHookedMethod(MethodHookParam p) {
-                            if (!Touchpad.active || !Touchpad.keyboardOnPhone || !Touchpad.imeProbeOk || !Touchpad.softKeyboardWanted) return;
-                            int id = externalId;
-                            if (id <= 0 || !(p.args[0] instanceof Integer) || (Integer) p.args[0] != id) return;
-                            Object r = p.getResult();
-                            if (r instanceof Integer && (Integer) r == 0) return;
-                            p.setResult(0);   // Display.DEFAULT_DISPLAY: la tastiera va sul telefono
-                            if (imeLogged++ < 12) XLog.i("[ime] tastiera del monitor (display " + id + ") spostata sul telefono (era " + r + ")");
-                        }
-                    });
-                    n++;
-                } catch (Throwable t) { XLog.e("[gate] hook " + m.getName() + " fallito", t); }
-            }
-        }
-        return n;
     }
 
     private static boolean isExternal(Object displayContent) {

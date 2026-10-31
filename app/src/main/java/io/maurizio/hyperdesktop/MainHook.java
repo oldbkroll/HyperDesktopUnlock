@@ -14,7 +14,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
  * LSPosed carica questo metodo in OGNI processo che rientra nello "scope"
  * del modulo. Qui smistiamo in base al processo:
  *   - "android"              = system_server (il framework)
- *   - "com.android.systemui" = SystemUI (finestra di collegamento, avvio del dock)
+ *   - "com.android.systemui" = SystemUI (finestra e scelta Computer)
  *   - "com.android.settings" = l'app Impostazioni (pagina Display esterni)
  * A fine caricamento ogni processo stampa una riga [diag] con gli hook agganciati.
  *
@@ -27,22 +27,18 @@ public class MainHook implements IXposedHookLoadPackage {
         switch (lp.packageName) {
             case "android":
                 safe("gate",          () -> ExternalDisplayGate.hook(lp));
-                safe("monitor-insets", () -> MonitorInsets.hook(lp));
                 safe("desktop-flags", () -> DesktopModeHooks.hook(lp, "system_server"));
                 safe("mirror-guard",  () -> SettingsGuardHooks.hook(lp));
                 safe("mirror-policy", () -> MirrorPolicyHooks.hook(lp));
-                safe("keys",          () -> AltTabHooks.hook(lp));
                 safe("control",       ModuleControl::startSystemServer);
-                Prefs.warmUp();
                 Diag.summary("system_server");
                 break;
             case "com.android.systemui":
                 safe("desktop-flags", () -> DesktopModeHooks.hook(lp, "systemui"));
                 safe("dialog",        () -> ConnectDialogHooks.hook(lp));
-                safe("auto-launch",   () -> LauncherHooks.hook(lp));
+                safe("desktop-choice",   () -> LauncherHooks.hook(lp));
                 safe("mirror-trace",  () -> SettingsGuardHooks.traceSystemUi(lp));
                 safe("report",        () -> ModuleControl.hookSystemUi(lp));
-                Prefs.warmUp();
                 Diag.summary(lp.processName);
                 break;
             case "com.android.settings":

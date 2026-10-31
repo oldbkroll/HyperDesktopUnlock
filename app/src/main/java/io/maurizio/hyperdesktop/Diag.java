@@ -37,8 +37,6 @@ final class Diag {
             first = false;
         }
         if (marks.isEmpty()) sb.append("no hooks");
-        String prefs = Prefs.describeIfLoaded();
-        if (prefs != null) sb.append(" | ").append(prefs);
         if (!allOk) sb.append("  <-- some hooks did not attach (firmware changed?)");
         last = sb.toString();
         XLog.i(last);
