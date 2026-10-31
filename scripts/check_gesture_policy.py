@@ -36,10 +36,11 @@ public class GesturePolicyTest {
 code = (src/'GestureConfigHooks.java').read_text(encoding='utf-8')
 assert 'getPackageUid("com.miui.home", 0)' in code
 assert 'XposedHelpers.getIntField(p.thisObject, "mUid") != homeUid' in code
-assert 'new Object[]{0, changedMask}' in code
-assert 'XposedBridge.invokeOriginalMethod' in code
+assert 'p.args[1] = mask & ~changedMask' in code
+assert 'notifyDisplayEventAsync' in code
+assert 'invokeOriginalMethod' not in code
 assert '(mask & changedMask) == 0 || (mask & lifecycleMask) != 0' in code
-assert 'afterHookedMethod' in code and 'p.setResult' not in code
+assert 'beforeHookedMethod' in code and 'p.setResult' not in code
 assert 'GestureConfigPolicy.shouldRefresh(ModuleState.enabled()' in code
 assert '"OS4.0.5.0.XPBCNXM".equals(Build.VERSION.INCREMENTAL)' in code
-print('PASS: launcher-only, original callbacks preserved, display 0 BASIC_CHANGED only, firmware gated')
+print('PASS: launcher-only, other-client and lifecycle delivery preserved, external BASIC_CHANGED filter, firmware gated')

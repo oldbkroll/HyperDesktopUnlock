@@ -1,3 +1,5 @@
+> 第五版兼容候选见 [REVISION_5.md](REVISION_5.md)；第四版往返回归失败，尚未确认修复。
+
 > 第四版路径修正候选见 [REVISION_4.md](REVISION_4.md)；第三版实机失败，尚未确认修复。
 
 > 第三版固件兼容候选见 [REVISION_3.md](REVISION_3.md)，尚待手势/镜像针对性实机验证。

@@ -4,13 +4,12 @@ import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-/** Candidate for the observed native MiuiHome DisplayManager callback regression.
- * Original external events remain intact; refresh only the same home callback
- * with display 0 BASIC_CHANGED. No window configuration, size or density writes.
+/** Firmware-specific candidate: keep external BASIC_CHANGED out of MiuiHome's
+ * phone-wide display listener. Other clients and all lifecycle events are intact.
+ * No synthetic default-display events or display-parameter writes.
  */
 final class GestureConfigHooks {
     private static volatile int homeUid = -1;
@@ -31,10 +30,10 @@ final class GestureConfigHooks {
                 | XposedHelpers.getStaticIntField(global, "EVENT_DISPLAY_DISCONNECTED");
         if (changedMask != 4 || lifecycleMask != 771)
             throw new IllegalStateException("Display event mask differs from inspected firmware");
-        XposedHelpers.findAndHookMethod(record, "transmitDisplayEvents", int.class, int.class,
+        XposedHelpers.findAndHookMethod(record, "notifyDisplayEventAsync", int.class, int.class,
                 new XC_MethodHook() {
-            @Override protected void afterHookedMethod(MethodHookParam p) {
-                if (p.hasThrowable() || !ModuleState.enabled()) return;
+            @Override protected void beforeHookedMethod(MethodHookParam p) {
+                if (!ModuleState.enabled()) return;
                 int displayId = (Integer) p.args[0];
                 int mask = (Integer) p.args[1];
                 if (displayId <= 0 || (mask & changedMask) == 0 || (mask & lifecycleMask) != 0) return;
@@ -49,14 +48,15 @@ final class GestureConfigHooks {
                     int mirror = Settings.Secure.getInt(c.getContentResolver(), SettingsGuardHooks.KEY_MIRROR, -1);
                     if (!GestureConfigPolicy.shouldRefresh(ModuleState.enabled(), mirror, displayId,
                             ExternalDisplayGate.present ? ExternalDisplayGate.externalId : -1)) return;
-                    // Invoke the original method to avoid recursive hook invocation. The existing
-                    // callback API makes the client query display 0's real DisplayInfo itself.
-                    XposedBridge.invokeOriginalMethod(p.method, p.thisObject, new Object[]{0, changedMask});
-                    XLog.i("[gesture-config] sent MiuiHome display 0 BASIC_CHANGED after display " + displayId);
+                    // Leave original delivery accounting and all remaining event bits intact.
+                    // With mask 0 the original method returns 0 without dispatching an event.
+                    p.args[1] = mask & ~changedMask;
+                    XLog.i("[gesture-config] filtered MiuiHome external BASIC_CHANGED display="
+                            + displayId + " mask=" + mask + " remaining=" + p.args[1]);
                 } catch (Throwable t) { XLog.e("[gesture-config] DMS refresh failed", t); }
             }
         });
-        XLog.i("[gesture-config] DMS transmitDisplayEvents installed (BASIC_CHANGED=" + changedMask + ")");
+        XLog.i("[gesture-config] DMS notifyDisplayEventAsync filter installed (BASIC_CHANGED=" + changedMask + ")");
         Diag.mark("gesture-config", true);
     }
     private GestureConfigHooks() {}
