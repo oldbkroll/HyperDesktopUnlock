@@ -43,6 +43,7 @@ public final class LauncherHooks {
                         Boolean enableMirroring = null;
                         for (Object a : p.args) if (a instanceof Boolean) { enableMirroring = (Boolean) a; break; }
                         if (Boolean.FALSE.equals(enableMirroring)) onDesktopChosen();
+                        else if (Boolean.TRUE.equals(enableMirroring)) onMirroringChosen();
                     }
                 });
                 n++;
@@ -66,6 +67,25 @@ public final class LauncherHooks {
                     if (app != null) ensureDesktopSetting(app);
                 } catch (Throwable t) { XLog.e("[launcher] scrittura di mirror_built_in_display = 0 fallita", t); }
             }
+        });
+    }
+
+    /** The firmware's mirror enforcer is also used by its explicit Mirror choice.
+     * Repair that user choice just as the existing Computer branch repairs 0.
+     */
+    private static void onMirroringChosen() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (!ModuleState.enabled()) return;
+            try {
+                Context app = (Context) XposedHelpers.callStaticMethod(
+                        XposedHelpers.findClass("android.app.ActivityThread", null), "currentApplication");
+                if (app == null) return;
+                ContentResolver cr = app.getContentResolver();
+                if (Settings.Secure.getInt(cr, SettingsGuardHooks.KEY_MIRROR, -1) != 1) {
+                    Settings.Secure.putInt(cr, SettingsGuardHooks.KEY_MIRROR, 1);
+                    XLog.i("[launcher] restored explicit Mirroring choice");
+                }
+            } catch (Throwable t) { XLog.e("[launcher] explicit mirror repair failed", t); }
         });
     }
 

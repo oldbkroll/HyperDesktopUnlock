@@ -158,7 +158,7 @@ final class ModuleControl {
         } catch (Throwable t) { return false; }
     }
 
-    private static Context systemContext() {
+    static Context systemContext() {
         try {
             Object at = XposedHelpers.callStaticMethod(
                 XposedHelpers.findClass("android.app.ActivityThread", null), "currentActivityThread");
